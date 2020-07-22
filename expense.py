@@ -1,7 +1,7 @@
 import sqlite3
 import time
 import tkinter
-#creating a window@
+#creating a window
 print("WELCOME TO SKDN EXPENSER TRACKER!")
 time.sleep(2)
 curs = sqlite3.connect('userdata.db')
