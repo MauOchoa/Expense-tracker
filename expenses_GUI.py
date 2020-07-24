@@ -12,7 +12,7 @@ class Expense_App(tk.Tk):
     
     def __init__(self):
         tk.Tk.__init__(self)
-        self.__frame = None
+        self._frame = None
         self.switch_frame(Login)
     
     def switch_frame(self, frame_class):
