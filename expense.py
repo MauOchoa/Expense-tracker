@@ -1,21 +1,22 @@
 import sqlite3
 import time
-import tkinter
-#creating a window
+import tkinter as tk
+from tkinter import *
+
 print("WELCOME TO SKDN EXPENSER TRACKER!")
 time.sleep(2)
 curs = sqlite3.connect('userdata.db')
 conn = sqlite3.connect('expenses.db')
-registro = input("""Select 1 or 2 according to the case
-1.- Set Up Account
-2.- Log in
-""")
+#registro = input("""Select 1 or 2 according to the case
+#1.- Set Up Account
+#2.- Log in
+#""")
 
 #create a cursor for the database
 cursor = conn.cursor()
 udb_cursor = curs.cursor()
 
-def add_exp(type):
+def Add_exp(type):
     amount = float(input("Enter the amount:"))
     if type == "Expense":
         amount = (amount * -1)
@@ -26,9 +27,9 @@ def add_exp(type):
     #commiting the database
     conn.commit()
     curs.commit()
-    main()
+    Main()
 
-def delete():
+def Delete():
     cursor.execute("SELECT rowid, * FROM expenses")
     record = cursor.fetchall()
     print("Select the ID of the record to delete:")
@@ -39,17 +40,17 @@ def delete():
         print(str(items[0]) + "\t" + items[1] + "\t\t" + " $" + str(items[2]) + "\t" + items[3])
     id_record = input("ID: ")
     if id_record == "cancelar":
-        main()
+        Main()
     else:
         cursor.execute("DELETE from expenses WHERE rowid =" + str(id_record))
         conn.commit()
         print("Record Deleted successfuly!")
         print("")
         time.sleep(1)
-        main()
+        Main()
         
 
-def generate():
+def Generate():
     #query for the database
     try:
         cursor.execute("SELECT * FROM expenses")
@@ -67,14 +68,14 @@ def generate():
         confirmation = input ("Is this correct?(y/n): ")
         confirmation.lower()
         if confirmation == "y":
-            main()
+            Main()
         elif confirmation == "n":
-            delete()
+            Delete()
         else:
             print("Insert y / n")
     except:
         print("Error Occured")
-def close():
+def Close():
     print("Closing App...")
     #commiting the database
     conn.commit()
@@ -84,7 +85,7 @@ def close():
     curs.close()
     print("goodbye!")
 
-def main():
+def Main():
     main_action = input("""Select the number of the option accordingly
     1.- Add income
     2.- Add expense
@@ -93,15 +94,15 @@ def main():
     5.- Close App
     """)
     if main_action == "1":
-        add_exp("Income")
+        Add_exp("Income")
     elif main_action == "2":
-        add_exp("Expense")
+        Add_exp("Expense")
     elif main_action == "3":
-        generate()
+        Generate()
     elif main_action == "4":
-        delete()
+        Delete()
     elif main_action == "5":
-        close()
+        Close()
     else:
         print("coming soon...")
     time.sleep(2)
@@ -134,33 +135,60 @@ def Set_up ():
         #commiting the database
         conn.commit()
         curs.commit()
-        main()
+        Main()
     except:
         print("You are registered already!")
 
-def login():
-    username = input("Insert email: ")
-    password = input("Insert Password: ")
-    udb_cursor.execute("SELECT * FROM user_data_table")
-    pass_item = udb_cursor.fetchall()
-    #print(pass_item)
-    for passw in pass_item:
-        if username == passw[2] and password == passw[4]:
-            print("Log in Succesfull!")
-            time.sleep(2)
-            main()
-        else:
-            print("username or password incorrect")
-            print(passw[3])
-            login()  
-          
+def Login():
+    try:
+        username = input("Insert email: ")
+        password = input("Insert Password: ")
+        udb_cursor.execute("SELECT * FROM user_data_table")
+        pass_item = udb_cursor.fetchall()
+        #print(pass_item)
+        for passw in pass_item:
+            if username == passw[2] and password == passw[4]:
+                print("Log in Succesfull!")
+                time.sleep(2)
+                Main()
+            else:
+                print("username or password incorrect")
+                print(passw[3])
+                Login()
+    except:
+        print("you have not registered yet!")
+        register = input("do you want to register? (y/n)")
+        register.lower()
+        if register == "y":
+            Set_up()  
+            
 
-if registro == "1":
-    Set_up()
-elif registro =="2":
-    login()
-else:
-    close()
+#if registro == "1":
+#    Set_up()
+#elif registro =="2":
+#    Login()
+#else:
+#    Close()
+############################################################GUI####################################
+#creating a window
+window = tk.Tk()
+window.title("SKDN EXPENSE TRACKER")
+
+canvas = tk.Canvas(window, width= 500 ,height = 500)
+
+filename = PhotoImage(file = "suitcase.png")
+background_label = Label(window, image=filename)
+background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+set_up_button = tk.Button(text='Login', command=Set_up, fg = 'black', bg= 'white')
+canvas.create_window(200, 420, window=set_up_button)
+login_button = tk.Button(text='Set up', command =Login, fg= 'black', bg='white')
+canvas.create_window(300,420, window=login_button )
+canvas.pack()
+
+
+
+window.mainloop()
 #adiing more elements tom my database
 #gastos = [("expense",'2000'),("income",'13000'),("expense",'220')]
 #cursor.executemany("INSERT INTO expensest VALUES (?,?)", gastos)
